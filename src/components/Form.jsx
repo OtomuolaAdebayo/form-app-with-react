@@ -1,16 +1,48 @@
-function Form(props) {
-    
-    function createAlert() {
-        alert("Thank you, You're now a member")
+import React, { useState } from "react"
+import axios from 'axios'
+
+
+const Form = () => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState(null)
+    const [showPassword, setShowPassword] = useState(false)
+
+    const handleSubmit = async (e) => {
+        setError("")
+        alert("You are Signed In")
+        try {
+            await axios.post(`http://localhost:5173/api/signup`, {
+            email, password
+        })
+        } catch (e) {
+            if(e.res.data.message){
+                setError(e.res.data.message)
+            }
+        }
     }
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword)
+    }
+
     return (
-        <form action="" className="w-full max-w-sm mx-auto" onSubmit={createAlert}>
-            <div className="flex flex-col pt-10" >
-                <input type="text" placeholder="email" className="border border-[#b8df10] mb-3 rounded-md" />
-                <input type="text" placeholder="password" className="border border-[#b8df10] rounded-md" />
-                <button type="submit" className="rounded-full text-lg leading-4 font-medium bg-blue-500 hover:bg-sky-700 h-8 mt-5 text-white">Sign Up</button>
-            </div>
-        </form>
+        <div className="bg-[#0e387a] h-screen mx-auto'">
+            <h1 className='text-center text-3xl text-[#9fafca] hover:text-[#b8df10] font-extrabold pt-10 pb-10'>Sign In Form</h1>
+            {error ?(<div>{error}</div>):('')}
+            <form className="max-w-sm mx-auto w-full" onSubmit={handleSubmit}>
+                <div className="flex flex-col pt-10">
+                    <label htmlFor="email" className="text-white">Email</label>
+                    <input type="text"  className="border-none mb-3 rounded-md" onChange={e => setEmail(e.target.value)} value={email}/>
+                    <label htmlFor="password" className="text-white">Password</label>
+                    <div className="relative">
+                        <input type={showPassword ? "text" : "password"}  className="rounded-md border-none pr-48" onChange={e => setPassword(e.target.value)} value={password}/>
+                        <button type="button" className="absolute inset-y-0 right-0 pr-2 flex items-center" onClick={toggleShowPassword}> {showPassword ? <i className="fas fa-eye-slash fa-2x"></i> : <i className="fas fa-eye fa-2x"></i>} </button>
+                    </div>
+                    <button type="submit" className="rounded-full text-lg leading-4 font-medium bg-blue-500 hover:bg-sky-700 h-8 mt-5 text-white" onClick={handleSubmit}>Sign In</button>
+                </div>
+            </form>
+        </div>
     )
 }
 
